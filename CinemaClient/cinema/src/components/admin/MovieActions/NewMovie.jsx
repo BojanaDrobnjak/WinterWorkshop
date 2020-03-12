@@ -15,47 +15,62 @@ class NewMovie extends React.Component {
             current: false,
             titleError: '',
             submitted: false,
-            canSubmit: true
+            canSubmit: true,
+            tags: '',
+            bannerUrl: ''
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleYearChange = this.handleYearChange.bind(this);
     }
-    
+
     handleChange(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
         this.validate(id, value);
     }
 
+    handleTagsChange(e) {
+        this.setState({ tags: e.target.value });
+    }
+
+    handleBannerUrlChange(e) {
+        this.setState({ bannerUrl: e.target.value });
+    }
+
     validate(id, value) {
         if (id === 'title') {
             if (value === '') {
-                this.setState({titleError: 'Fill in movie title',
-                                canSubmit: false});
+                this.setState({
+                    titleError: 'Fill in movie title',
+                    canSubmit: false
+                });
             } else {
-                this.setState({titleError: '',
-                                canSubmit: true});
+                this.setState({
+                    titleError: '',
+                    canSubmit: true
+                });
             }
         }
 
-        if(id === 'year') {
+        if (id === 'year') {
             const yearNum = +value;
-            if(!value || value === '' || (yearNum<1895 || yearNum>2100)){
-                this.setState({yearError: 'Please chose valid year'});
+            if (!value || value === '' || (yearNum < 1895 || yearNum > 2100)) {
+                this.setState({ yearError: 'Please chose valid year' });
             } else {
-                this.setState({yearError: ''});
+                this.setState({ yearError: '' });
             }
         }
     }
 
     handleSubmit(e) {
         e.preventDefault();
+        let splitTags = this.state.tags.split(",");
 
         this.setState({ submitted: true });
         const { title, year, rating } = this.state;
-        if (title && year && rating) {
-            this.addMovie();
+        if (title && year && rating && splitTags[0] !== "") {
+            this.addMovie(splitTags);
         } else {
             NotificationManager.error('Please fill in data');
             this.setState({ submitted: false });
@@ -63,24 +78,28 @@ class NewMovie extends React.Component {
     }
 
     handleYearChange(year) {
-        this.setState({year: year});
+        this.setState({ year: year });
         this.validate('year', year);
     }
 
-    addMovie() {
-        const { title, year, current, rating } = this.state;
+    addMovie(splitTags) {
+        const { title, year, current, rating, bannerUrl } = this.state;
 
         const data = {
             Title: title,
             Year: +year,
             Current: current === "true",
-            Rating: +rating
+            Rating: +rating,
+            Tags: splitTags,
+            BannerUrl : bannerUrl
         };
 
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 
@@ -102,7 +121,7 @@ class NewMovie extends React.Component {
     }
 
     render() {
-        const { title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
+        const { bannerUrl, tags, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
@@ -155,10 +174,31 @@ class NewMovie extends React.Component {
                             </FormGroup>
                             <FormGroup>
                                 <FormControl className="add-new-form" as="select" placeholder="Current" id="current" value={current} onChange={this.handleChange}>
-                                <option value="true">Current</option>
-                                <option value="false">Not Current</option>
+                                    <option value="true">Current</option>
+                                    <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
+                            <FormControl
+                                id="tags"
+                                type="text"
+                                placeholder="Movie Tags"
+                                value={tags}
+                                onChange={(e) => {
+                                    this.handleTagsChange(e);
+                                }}
+                                className="add-new-form"
+                            />
+                            <FormControl
+                                id="bannerUrl"
+                                type="text"
+                                placeholder="Banner Url"
+                                value={bannerUrl}
+                                onChange={(e) => {
+                                    this.handleBannerUrlChange(e);
+                                }}
+                                className="add-new-form"
+                            />
+                            <FormText className="text-danger">{titleError}</FormText>
                             <Button className="btn-add-new" type="submit" disabled={submitted || !canSubmit} block>Add</Button>
                         </form>
                     </Col>

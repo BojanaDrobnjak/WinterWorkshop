@@ -18,6 +18,7 @@ namespace WinterWorkShop.Cinema.Data
 
         public bool Current { get; set; }
 
+        public string BannerUrl { get; set; }
         public virtual ICollection<Projection> Projections { get; set; }
 
         public virtual ICollection<MovieTag> MovieTags { get; set; }

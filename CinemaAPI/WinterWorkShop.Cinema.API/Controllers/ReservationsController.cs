@@ -18,7 +18,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
     [Route("api/[controller]")]
 
     public class ReservationsController : ControllerBase
-    {
+    { 
 
         private readonly IReservationService _reservationService;
         private readonly IUserService _userService;
@@ -66,16 +66,16 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             reservationDomainModels = await _reservationService.GetByProjectionId(id);
 
-            //if (reservationDomainModels.Count() == 0)
-            //{
-            //    ErrorResponseModel errorResponse = new ErrorResponseModel
-            //    {
-            //        ErrorMessage = Messages.RESERVATION_GET_ALL_BY_PROJECTIONID_ERROR,
-            //        StatusCode = System.Net.HttpStatusCode.InternalServerError
-            //    };
+            if (reservationDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.RESERVATION_GET_ALL_BY_PROJECTIONID_ERROR,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
 
-            //    return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
-            //}
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
 
             return Ok(reservationDomainModels);
         }
@@ -235,7 +235,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            //PaymentResponse
             List<ReservationDomainModel> reservationResultList = new List<ReservationDomainModel>();
             int bonusPointsToAdd = 0;
             foreach (Guid seatId in reservationModel.SeatIds)

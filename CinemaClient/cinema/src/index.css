@@ -44,6 +44,7 @@ code {
 
 .filter {
   margin: 25px 0 20px 0;
+  padding-left: 15px;
 }
 
 .filter-heading {
@@ -212,7 +213,25 @@ input[type="date"]::-webkit-clear-button
   color: #cce85d;
 }
 
-
 .small-heading {
   margin-left: 63px;
+}
+
+.img-style{
+  width: 1068px;
+  height: 350px;
+  margin-bottom: 15px;
+}
+
+.projections-title {
+  padding-left: 15px;
+}
+
+.avatar-img {
+  height: 180px;
+  width: 160px;
+}
+
+.user-info-container{
+  width: 500px;
 }

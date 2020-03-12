@@ -419,16 +419,21 @@ namespace WinterWorkShop.Cinema.Tests.Services
         public void ProjectionService_DeleteByAuditoriumId_ReturnsProjectionDomainModelList()
         {
             //Arrange
-
             int expectedCount = 1;
             ProjectionService projectionsService = new ProjectionService(_mockProjectionsRepository.Object, _mockReservationService.Object);
 
             List<Projection> projectionsModelsList = new List<Projection>();
             projectionsModelsList.Add(_projection);
             IEnumerable<Projection> projections = projectionsModelsList;
-            Task<IEnumerable<Projection>> responseTask = Task.FromResult(projections);
 
-            _mockProjectionsRepository.Setup(x => x.DeleteByAuditoriumId(It.IsAny<int>())).Returns(responseTask);
+            List<ReservationDomainModel> reservationDomainModelsList = new List<ReservationDomainModel>();
+            reservationDomainModelsList.Add(_reservationDomainModel);
+            IEnumerable<ReservationDomainModel> reservations = reservationDomainModelsList;
+            Task<IEnumerable<ReservationDomainModel>> reservationResponseTask = Task.FromResult(reservations);
+
+            _mockProjectionsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(projections);
+            _mockProjectionsRepository.Setup(x => x.Delete(It.IsAny<Guid>())).Returns(_projection);
+            _mockReservationService.Setup(x => x.DeleteByProjectionId(It.IsAny<Guid>())).Returns(reservationResponseTask);
 
             //Act
             var resultAction = projectionsService.DeleteByAuditoriumId(_projection.AuditoriumId).ConfigureAwait(false).GetAwaiter().GetResult().ToList();
@@ -476,12 +481,16 @@ namespace WinterWorkShop.Cinema.Tests.Services
         public void ProjectionService_DeleteByAuditoriumId_ProjectionRepositoryReturnsNull_ReturnsNull()
         {
 
-            ProjectionService projectionsService = new ProjectionService(_mockProjectionsRepository.Object, _mockReservationService.Object);
-            
-            IEnumerable<Projection> projections = null;
-            Task<IEnumerable<Projection>> responseTask = Task.FromResult(projections);
+            List<Projection> projectionsModelsList = new List<Projection>();
+            projectionsModelsList.Add(_projection);
+            IEnumerable<Projection> projections = projectionsModelsList;
 
-            _mockProjectionsRepository.Setup(x => x.DeleteByAuditoriumId(It.IsAny<int>())).Returns(responseTask);
+            ProjectionService projectionsService = new ProjectionService(_mockProjectionsRepository.Object, _mockReservationService.Object);
+
+            Projection projection = null;
+
+            _mockProjectionsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(projections);
+            _mockProjectionsRepository.Setup(x => x.Delete(It.IsAny<int>())).Returns(projection);
 
             //Act
             var resultAction = projectionsService.DeleteByAuditoriumId(_projection.AuditoriumId).ConfigureAwait(false).GetAwaiter().GetResult();

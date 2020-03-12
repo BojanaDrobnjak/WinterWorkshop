@@ -5,11 +5,8 @@ export const getRole = () => {
         return false;
     }
 
-    console.log(token);
-
     var jwtDecoder = require('jwt-decode');
     const decodedToken = jwtDecoder(token);
-    console.log(decodedToken);
 
     let role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 

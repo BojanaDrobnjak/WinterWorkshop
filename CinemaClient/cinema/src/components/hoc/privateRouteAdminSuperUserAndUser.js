@@ -7,7 +7,6 @@ import * as authCheck from '../helpers/authCheck';
 export const PrivateRouteAdminSuperUserAndUser = ({ component: Component, ...rest }) => {
     useEffect(() => {
         if (authCheck.isSuperUser() || authCheck.isAdmin() || authCheck.isUser()) {
-            NotificationManager.success('Welcome');
         } else {
             NotificationManager.error('Please log in.');
         }

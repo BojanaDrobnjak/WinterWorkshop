@@ -3,10 +3,11 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Table } from 'react-bootstrap';
 import { getUserName, getRole } from '../helpers/authCheck';
+import { withRouter } from 'react-router';
 
 
 class UserProfile extends Component {
-  //stavi u routes da ne moze guest da pristupi
+
     constructor(props) {
       super(props);
       this.state = {
@@ -73,11 +74,9 @@ class UserProfile extends Component {
           .then(data => {
             if (data) {
               this.setState({ reservations: data});
-              console.log("rezervacije: ", data);
               let projections = [];
               this.state.reservations.map(reservation => {
                 projections.push(this.getProjectionById(reservation.projectionId));
-                console.log("projections: ", projections);
                 });
             }
           })
@@ -89,8 +88,6 @@ class UserProfile extends Component {
 
       getProjectionById(projectionId) {
 
-        console.log(projectionId, "projectionId");
-        
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -109,8 +106,6 @@ class UserProfile extends Component {
             .then(data => {
               if (data) {
                 this.setState({ projection: data});
-                console.log("projection: ", data);
-                
               }
             })
             .catch(response => {
@@ -118,8 +113,6 @@ class UserProfile extends Component {
               this.setState({ submitted: false });
             });
       }
-
-
 
     render() {
                  
@@ -129,10 +122,10 @@ class UserProfile extends Component {
                     <h1 className="form-header form-heading">Hello, {this.state.user.firstName}!</h1>
                 </Row>
                 <Row className="no-gutters pr-5 pl-5">
-                <div class="card mb-3">
+                <div class="card mb-3 user-info-container">
                 <div class="row no-gutters">
                     <div class="col-md-4">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS8tVjlY8BQfSZg9SoudTWMCR6eHXpi-QHhQDUYSyjFmHYOTyyp" class="card-img" alt="..."/>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS8tVjlY8BQfSZg9SoudTWMCR6eHXpi-QHhQDUYSyjFmHYOTyyp" class="avatar-img" alt="..."/>
                     </div>
                     <div class="col-md-8">
                     <div class="card-body">
@@ -145,12 +138,9 @@ class UserProfile extends Component {
                 </div>
                 </div>
                 </Row>
-                <Row>
-                    <h5 class="small-heading"><strong>Reservations:</strong></h5>
-                </Row>
             </React.Fragment>
         );
       }
 }
 
-export default UserProfile;
+export default withRouter(UserProfile);

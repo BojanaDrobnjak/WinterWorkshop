@@ -52,14 +52,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Name = newTag.Name
             };
 
-            var data = _tagsRepository.Insert(tagToCreate);
-
+            var data = await _tagsRepository.GetTagByTagName(newTag.Name);
+            
+            Console.WriteLine("data: " + data);
             if (data == null)
             {
-                return null;
+                data =  _tagsRepository.Insert(tagToCreate);
+                _tagsRepository.Save();
             }
-
-            _tagsRepository.Save();
 
             TagsDomainModel domainModel = new TagsDomainModel()
             {

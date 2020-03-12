@@ -9,7 +9,6 @@ export const checkRole = () => {
 
     if(isAdmin()) 
     {
-        console.log("samo admin");
         return (
             <Col lg={2} className="dashboard-navigation">
         <Row className="justify-content-center mt-2">
@@ -59,7 +58,6 @@ export const checkRole = () => {
     }
     if(isSuperUser()===true) 
     {
-        console.log("admin i superuser");
         return (
             <Col lg={2} className="dashboard-navigation">
         <Row className="justify-content-center mt-2">
@@ -97,7 +95,6 @@ export const checkRole = () => {
     } 
     if(isUser()===true)
     {
-        console.log("user");
         return (
             <Col lg={2} className="dashboard-navigation">
         <Row className="justify-content-center mt-2">
@@ -114,6 +111,9 @@ export const checkRole = () => {
         </Row>
         <Row className="justify-content-center mt-2">
             <NavLink activeClassName="active-link" to='/dashboard/Projection'><FontAwesomeIcon className='text-primary mr-1' icon={faPlayCircle}/>Projections</NavLink>
+        </Row>
+         <Row className="justify-content-center">
+            <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faVideo}/>Projection</span>
         </Row>
         </Col>
         );

@@ -81,7 +81,6 @@ class ShowAllAuditoriums extends Component {
     fillTableWithData() {
         return this.state.auditoriums.map(auditorium => {
             return <tr key={auditorium.id}>
-                        <td width="30%">{auditorium.id}</td>
                         <td width="30%">{auditorium.cinemaId}</td>
                         <td width="30%">{auditorium.name}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
@@ -100,7 +99,6 @@ class ShowAllAuditoriums extends Component {
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
                             <tr>
-                                <th>Id</th>
                                 <th>Cinema Id</th>
                                 <th>Name</th>
                                 <th></th>

@@ -11,6 +11,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public bool Current { get; set; }
         public double Rating { get; set; }
         public int Year { get; set; }
+        public string BannerUrl { get; set; }
         public IEnumerable<ProjectionDomainModel> Projections { get; set; }
     }
 }

@@ -373,30 +373,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
         }
 
         [TestMethod]
-        public void SeatService_DeleteByAuditoriumId_ReservationRepositoryReturnsNull_ReturnsNull()
-        {
-            //Arrange
-            List<Seat> seatsModelsList = new List<Seat>();
-            seatsModelsList.Add(_seat);
-            IEnumerable<Seat> seats = seatsModelsList;
-
-            IEnumerable<ReservationDomainModel> reservations = null;
-            Task<IEnumerable<ReservationDomainModel>> reservationResponseTask = Task.FromResult(reservations);
-
-            SeatService seatService = new SeatService(_mockSeatsRepository.Object, _mockReservationService.Object);
-
-            _mockSeatsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(seats);
-            _mockReservationService.Setup(x => x.DeleteBySeatId(It.IsAny<Guid>())).Returns(reservationResponseTask);
-
-
-            //Act
-            var result = seatService.DeleteByAuditoriumId(_seat.AuditoriumId).ConfigureAwait(false).GetAwaiter().GetResult();
-
-            //Assert
-            Assert.IsNull(result);
-        }
-
-        [TestMethod]
         public void SeatService_deleteByAuditoriumId_SeatsRepository_DeleteByAuditoriumId_ReturnsNull_ReturnsNull()
         {
             //Arrange

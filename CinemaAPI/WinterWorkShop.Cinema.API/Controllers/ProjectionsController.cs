@@ -277,10 +277,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     projectionsByCinemaId.AddRange(projections);
                 }
 
-
-
-
-
                 if (filterModel.AuditoriumId > 0)
                 {
                     List<ProjectionDomainModel> projectionsByAuditoriumId = new List<ProjectionDomainModel>();
@@ -291,7 +287,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
                             projectionsByAuditoriumId.Add(projectionDomainModel);
                         }
                     }
-
 
 
 

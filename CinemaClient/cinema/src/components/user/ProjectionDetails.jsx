@@ -30,7 +30,6 @@ class ProjectionDetails extends Component {
     };
 
   }
-  //do not delete!
   allButtons = undefined;
 
 
@@ -45,7 +44,6 @@ class ProjectionDetails extends Component {
     var idFromUrl = (window.location.pathname).split("/");
     var id = idFromUrl[3];
 
-    //napravi f-ju koja ce vracati ovaj requestOptions
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -104,7 +102,6 @@ class ProjectionDetails extends Component {
   }
 
   getSeatsForAuditorium(auditId) {
-    //napravi f-ju koja ce vracati ovaj requestOptions
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -137,9 +134,7 @@ class ProjectionDetails extends Component {
   }
 
   getUserByUsername() {
-    //napravi f-ju koja ce vracati ovaj requestOptions
     let ussName = getUserName();
-    console.log("username: ", ussName);
 
     const requestOptions = {
       method: 'GET',
@@ -169,7 +164,6 @@ class ProjectionDetails extends Component {
   }
 
   getSeats(auditId) {
-    //napravi f-ju koja ce vracati ovaj requestOptions
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -200,7 +194,6 @@ class ProjectionDetails extends Component {
 
   getMovie() {
     var id = (window.location.pathname).split("/")[4];
-    //napravi f-ju koja ce vracati ovaj requestOptions
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -208,13 +201,6 @@ class ProjectionDetails extends Component {
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       }
     };
-
-
-    /**var url_string = window.location.href;
-         var url = new URL(url_string);
-        var c = url.searchParams.get("param");
-             console.log(c); */
-
 
     fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
       .then(response => {
@@ -237,19 +223,44 @@ class ProjectionDetails extends Component {
       });
   }
 
+  tryReservation(e) {
+    e.preventDefault();
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      },
+      body: ''
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/levi9payment`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.statusText;
+      })
+      .then(result => {
+        this.makeReservation(e);
+      })
+      .catch(response => {
+        NotificationManager.warning('Insufficient founds.');
+        this.setState({ submitted: false });
+      });
+
+  }
+
   makeReservation(e) {
     e.preventDefault();
-    console.log("getRole() ", getRole());
 
     if (getRole() === "user" || getRole() === "superUser" || getRole() === "admin") {
 
       var idFromUrl = (window.location.pathname).split("/");
       var projectionId = idFromUrl[3];
-      console.log("make reservation called");
 
       const { currentReservationSeats } = this.state;
-      console.log("projection id: ", projectionId, "seat ids: ", currentReservationSeats, "user: ", this.state.userId);
-
+      
       const data = {
         projectionId: projectionId,
         seatIds: currentReservationSeats,
@@ -274,7 +285,6 @@ class ProjectionDetails extends Component {
         })
         .then(result => {
           NotificationManager.success('Your reservation has been made successfully!');
-          // this.props.history.push(`projection`);
           setTimeout(() => { window.location.reload(); }, 2000);
         })
         .catch(response => {
@@ -286,8 +296,6 @@ class ProjectionDetails extends Component {
     }
   }
   renderRows(rows, seats) {
-    //4 puta izbaci nule, pa 2 puta 8,6(npr)
-    console.log("MaxRows: ", rows, "MaxSeatsPerRow: ", seats);
 
     const rowsRendered = [];
     if (this.state.allSeats.length > 0) {
@@ -298,7 +306,6 @@ class ProjectionDetails extends Component {
 
         rowsRendered.push(<tr key={i}>{this.renderSeats(seats, i, startingIndex, maxIndex)}</tr>);
       }
-      console.log("currentReservationSeats: ", this.state.currentReservationSeats);
     }
     return rowsRendered;
   }
@@ -335,10 +342,8 @@ class ProjectionDetails extends Component {
   getAllButtons() {
     if (!this.allButtons) {
       this.allButtons = document.getElementsByClassName("seat");
-      console.log("ALL BUTTONS: \n\n\n\n\n\n\n\n\n");
       for (let i = 0; i < this.allButtons.length; i++) {
         let seat = this.getSeatById(this.allButtons[i].value);
-        console.log("----------\nid: ", seat.id, "\nrow: ", seat.row, "\nnum: ", seat.number);
       }
     }
   }
@@ -397,13 +402,10 @@ class ProjectionDetails extends Component {
                 let currentNumber = i;
                 let currSeatId = currentSeatId;
 
-                //ne diraj
                 let leftSeatIsCurrentlyReserved;
                 let leftSeatIsTaken;
                 let rightSeatIsCurrentlyReserved;
                 let rightSeatIsTaken;
-                //treba da resimo problem sto kod 7 x 8, on generise (ili postavlja u niz obj-a) kao 8 x 7, ne 7 x 8  
-                // console.log("|", currentRow, " :currentRow |", currentNumber, " :currentNumber |", currSeatId, " :currSeatId |");
                 let leftSeatProperties = this.getSeatByPosition(currentRow + 1, currentNumber);
                 let rightSeatProperties = this.getSeatByPosition(currentRow + 1, currentNumber + 2);
 
@@ -428,7 +430,6 @@ class ProjectionDetails extends Component {
                   if (!rightSeatIsCurrentlyReserved && !rightSeatIsTaken && rightSeatProperties) {
                     this.markSeatAsGreenish(rightSeatProperties.id);
                   }
-                  //mozda i ovaj dodnji deo treba da udje u ovaj if gore 
                   if (this.state.currentReservationSeats.includes(currentSeatId) === false) {
                     this.state.currentReservationSeats.push(currentSeatId);
                   }
@@ -463,8 +464,6 @@ class ProjectionDetails extends Component {
         );
         if (seatIndex < maxIndex) {
           seatIndex += 1;
-        } else {
-          console.log("seatIndex>maxIndex");
         }
       }
     }
@@ -479,7 +478,7 @@ class ProjectionDetails extends Component {
 
 
   fillTableWithData() {
-    let auditorium = this.renderRows(this.state.maxNumberOfRow,this.state.maxRow);//this.state.maxRow, this.state.maxNumberOfRow
+    let auditorium = this.renderRows(this.state.maxNumberOfRow, this.state.maxRow);
     return <Card.Body>
       <Card.Title><span className="card-title-font">{this.state.movies.title}</span>
         <span className="float-right">{this.getRoundedRating(this.state.movies.rating)}</span></Card.Title>
@@ -509,7 +508,7 @@ class ProjectionDetails extends Component {
                     </tr>
                   </tbody>
                 </table>
-                <button onClick={(e) => this.makeReservation(e)} class="btn-payment">Confirm<FontAwesomeIcon className="text-primary mr-2 fa-1x btn-payment__icon" icon={faShoppingCart} /></button>
+                <button onClick={(e) => this.tryReservation(e)} class="btn-payment">Confirm<FontAwesomeIcon className="text-primary mr-2 fa-1x btn-payment__icon" icon={faShoppingCart} /></button>
               </div>
             </form>
             <div>

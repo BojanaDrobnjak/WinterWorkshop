@@ -255,8 +255,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<ProjectionDomainModel>> DeleteByAuditoriumId(int auditoriumId)
         {
-            var projectionModelsByAuditoriumId = _projectionsRepository.GetByAuditoriumId(auditoriumId).ToList();
+            var projectionModelsByAuditoriumId = _projectionsRepository.GetByAuditoriumId(auditoriumId);
+            if (projectionModelsByAuditoriumId == null)
+            {
+                return null;
+            }
+            projectionModelsByAuditoriumId.ToList();
 
+            List<Projection> deletedProjections = new List<Projection>(); 
             foreach (Projection projection in projectionModelsByAuditoriumId)
             {
                 var deletedReservations = await _reservationService.DeleteByProjectionId(projection.Id);
@@ -265,16 +271,16 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     return null;
                 }
+                deletedReservations.ToList();
+
+                var deletedProjection = _projectionsRepository.Delete(projection.Id);
+                if (deletedProjection == null)
+                {
+                    return null;
+                }
+                deletedProjections.Add(deletedProjection);
             }
 
-            var deletedProjections = await _projectionsRepository.DeleteByAuditoriumId(auditoriumId);
-
-            if (deletedProjections == null)
-            {
-                return null;
-            }
-
-            _projectionsRepository.Save();
 
             List<ProjectionDomainModel> domainModelList = new List<ProjectionDomainModel>();
 
@@ -313,7 +319,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            _projectionsRepository.Save();
 
             List<ProjectionDomainModel> domainModelList = new List<ProjectionDomainModel>();
 

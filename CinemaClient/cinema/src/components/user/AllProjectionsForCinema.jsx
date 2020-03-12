@@ -13,11 +13,9 @@ class AllProjectionsForCinema extends Component {
     }
 
     componentDidMount() {
-      // this.getProjections();
     }
 
     getProjections() {
-      // TO DO here you need to change this part and query, and fetch movies with projections, and in future add fetch by cinema name
       const requestOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json',

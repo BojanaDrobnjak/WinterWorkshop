@@ -58,9 +58,9 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movie);
         }
 
-       [HttpGet]
-       [Route("byauditoriumid/{id}")]
-       public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetMovieListByAuditoriumId(int id)
+        [HttpGet]
+        [Route("byauditoriumid/{id}")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetMovieListByAuditoriumId(int id)
         {
             var projectionData = await _projectionsService.GetProjectionsByAuditoriumId(id);
             if (projectionData.Count() == 0)
@@ -69,7 +69,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
 
             List<MovieDomainModel> movieList = new List<MovieDomainModel>();
-            foreach(ProjectionDomainModel projectionDomainModel in projectionData)
+            foreach (ProjectionDomainModel projectionDomainModel in projectionData)
             {
                 var movieData = await _movieService.GetMovieByIdAsync(projectionDomainModel.MovieId);
                 if (movieData == null)
@@ -144,20 +144,42 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [Authorize(Roles = "admin, superUser")]
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]MovieModel movieModel)
+        public async Task<ActionResult> Post([FromBody]CreateMovieWithTagsModel movieModel)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+           
             MovieDomainModel domainModel = new MovieDomainModel
             {
                 Current = movieModel.Current,
                 Rating = movieModel.Rating,
                 Title = movieModel.Title,
-                Year = movieModel.Year
+                Year = movieModel.Year,
+                BannerUrl = movieModel.BannerUrl
             };
+
+            List<TagsDomainModel> tagList = new List<TagsDomainModel>();
+            try
+            {
+                foreach (string tag in movieModel.Tags)
+                {
+                    TagsDomainModel tagsDomainModel = new TagsDomainModel
+                    {
+                        Name = tag
+                    };
+
+                    TagsDomainModel createdTag = await _tagService.AddTag(tagsDomainModel);
+                    if (createdTag != null)
+                    {
+                        tagList.Add(createdTag);
+                    }
+                }
+            }
+            catch (DbUpdateException e)
+            { Console.WriteLine(e.Message); }
 
             MovieDomainModel createMovie;
 
@@ -187,6 +209,16 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
+            foreach (TagsDomainModel tag in tagList)
+            {
+                MovieTagsDomainModel movieTadDomainModel = new MovieTagsDomainModel
+                {
+                    MovieId = createMovie.Id,
+                    TagId = tag.Id
+                };
+
+                await _movieTagService.AddMovieTag(movieTadDomainModel);
+            }
             return Created("movies//" + createMovie.Id, createMovie);
         }
 
@@ -285,7 +317,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
 
             movieToUpdate.Title = movieToUpdate.Title;
-           if(movieToUpdate.Current == true)
+            if (movieToUpdate.Current == true)
             {
                 movieToUpdate.Current = false;
             }
@@ -421,7 +453,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             // Ovo je lista koja ce sadrzati movieIDeve svakog MovieTag objekta sa zeljenim TagIDem
             List<Guid> movieIdList = new List<Guid>();
-            foreach(MovieTagsDomainModel domainModel in movieTagList)
+            foreach (MovieTagsDomainModel domainModel in movieTagList)
             {
                 movieIdList.Add(domainModel.MovieId);
 
@@ -430,7 +462,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             // Sada se poziva GetMovie metoda za svaki MovieId u listi i dodaje se na listu filmova koji se vracaju kao rezultat
             List<MovieDomainModel> result = new List<MovieDomainModel>();
             MovieDomainModel movieDomainModel;
-            foreach(Guid movieId in movieIdList)
+            foreach (Guid movieId in movieIdList)
             {
                 movieDomainModel = await _movieService.GetMovieByIdAsync(movieId);
                 result.Add(movieDomainModel);

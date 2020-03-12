@@ -200,6 +200,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
+            _usersRepository.Save();
+
             UserDomainModel domainModel = new UserDomainModel
             {
                 Id = userData.Id,

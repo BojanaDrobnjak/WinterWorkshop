@@ -146,7 +146,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<AuditoriumDomainModel>> DeleteAuditoriumsByCinemaId(int cinemaId)
         {
-            var auditoriumsToBeDeleted = (await _auditoriumsRepository.GetByCinemaId(cinemaId));
+            var auditoriumsToBeDeleted = await _auditoriumsRepository.GetByCinemaId(cinemaId);
 
             if (auditoriumsToBeDeleted == null)
             {
@@ -186,8 +186,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
                 deletedAuditoriums.Add(domainModel);
             }
-
-            _auditoriumsRepository.Save();
 
             return deletedAuditoriums;
 

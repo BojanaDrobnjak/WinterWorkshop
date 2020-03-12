@@ -109,7 +109,7 @@ class ShowAllMovies extends Component {
                 setTimeout(() => { window.location.reload(); }, 2000);
 
             })
-            .catch(response => {
+            .catch(()=> {
                 NotificationManager.error("This movie has projections!");
                 this.setState({ submitted: false });
             });
@@ -242,7 +242,6 @@ class ShowAllMovies extends Component {
         this.state.tags.map(tag => {
             this.state.listOfTags.push(tag.name);
         });
-        console.log('legth of list', this.state.listOfTags.length);
         var list = ' | ';
         for (var i = 0; i < (this.state.listOfTags.length); i++) {
             list += this.state.listOfTags[i] + ' | ';
@@ -288,7 +287,6 @@ class ShowAllMovies extends Component {
         e.preventDefault();
 
         var data = new FormData(e.currentTarget);
-        console.log(data, "data handleSubmit");
 
         var queryParts = [];
         var entries = data.entries();
@@ -301,7 +299,6 @@ class ShowAllMovies extends Component {
         var url = loc.protocol + '//' + loc.host + loc.pathname + '?' + query;
 
         let tag = url.split("=")[1];
-        console.log("tag search ", tag);
 
         this.setState({ submitted: true });
         if (tag) {

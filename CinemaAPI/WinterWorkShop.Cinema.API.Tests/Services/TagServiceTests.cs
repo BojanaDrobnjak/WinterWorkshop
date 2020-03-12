@@ -126,22 +126,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
         }
 
         [TestMethod]
-        public void TagService_AddTag_RepositoryReturnsNull_ReturnNull()
-        {
-            //Arrange
-            Tag nullTag = null;
-            TagService tagService = new TagService(_mockTagsRepository.Object, _mockMovieTagService.Object);
-
-            _mockTagsRepository.Setup(x => x.Insert(It.IsAny<Tag>())).Returns(nullTag);
-
-            //Act
-            var result = tagService.AddTag(_tagDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();
-
-            //Assert
-            Assert.IsNull(result);
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(DbUpdateException))]
         public void TagService_AddTag_ThrowsDbUpdateException()
         {

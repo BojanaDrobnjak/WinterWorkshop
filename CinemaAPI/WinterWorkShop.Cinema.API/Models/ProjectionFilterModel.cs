@@ -14,5 +14,6 @@ namespace WinterWorkShop.Cinema.API.Models
         public Guid MovieId { get; set; }
 
         public DateTime DateTime { get; set; }
+        public string BannerUrl { get; set; }
     }
 }

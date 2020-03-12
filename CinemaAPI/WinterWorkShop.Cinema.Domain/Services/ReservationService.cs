@@ -245,8 +245,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            _reservationRepository.Save();
-
             List<ReservationDomainModel> domainModelList = new List<ReservationDomainModel>();
 
             foreach (Reservation reservation in data)
@@ -275,7 +273,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            _reservationRepository.Save();
 
             List<ReservationDomainModel> domainModelList = new List<ReservationDomainModel>();
 
@@ -304,8 +301,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-
-            _reservationRepository.Save();
 
             List<ReservationDomainModel> domainModelList = new List<ReservationDomainModel>();
 
@@ -362,8 +357,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            _reservationRepository.Save();
-
             List<ReservationDomainModel> domainModelList = new List<ReservationDomainModel>();
             foreach (Reservation reservation in data)
             {
@@ -388,8 +381,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-
-            _reservationRepository.Save();
 
             List<ReservationDomainModel> domainModelList = new List<ReservationDomainModel>();
             foreach (Reservation reservation in data)

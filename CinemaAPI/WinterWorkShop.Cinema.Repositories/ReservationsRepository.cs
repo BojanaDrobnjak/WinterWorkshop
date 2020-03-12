@@ -99,7 +99,7 @@ namespace WinterWorkShop.Cinema.Repositories
         public async Task<IEnumerable<Reservation>> DeleteByUserId(Guid userId)
         {
             var existing = _cinemaContext.Reservations.Where(x => x.UserId == userId);
-            List<Reservation> result = new List<Reservation> { };
+            List<Reservation> result = new List<Reservation>();
 
             foreach (Reservation reservation in existing)
             {
@@ -113,7 +113,7 @@ namespace WinterWorkShop.Cinema.Repositories
         public async Task<IEnumerable<Reservation>> DeleteByProjectionId (Guid projectionId)
         {
             var existing = _cinemaContext.Reservations.Where(x => x.ProjectionId == projectionId);
-            List<Reservation> result = new List<Reservation> { };
+            List<Reservation> result = new List<Reservation>();
 
             foreach (Reservation reservation in existing)
             {
@@ -127,7 +127,7 @@ namespace WinterWorkShop.Cinema.Repositories
         public async Task<IEnumerable<Reservation>> DeleteBySeatId(Guid seatId)
         {
             var existing = _cinemaContext.Reservations.Where(x => x.SeatId == seatId);
-            List<Reservation> result = new List<Reservation> { };
+            List<Reservation> result = new List<Reservation> ();
 
             foreach (Reservation reservation in existing)
             {

@@ -27,8 +27,6 @@ class EditAuditorium extends React.Component {
 
     componentDidMount() {
         this.getCinemas();
-        // const { id } = this.props.match.params; 
-        // this.getAuditoriumById(id);
     }
     
     handleChange(e) {
@@ -49,32 +47,6 @@ class EditAuditorium extends React.Component {
             this.setState({ submitted: false });
         }
     }
-
-    // getAuditoriumById() {
-    //     const requestOptions = {
-    //       method: 'GET',
-    //       headers: {'Content-Type': 'application/json',
-    //                     'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    //     };
-  
-    //     this.setState({isLoading: true});
-    //     fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
-    //       .then(response => {
-    //         if (!response.ok) {
-    //           return Promise.reject(response);
-    //       }
-    //       return response.json();
-    //       })
-    //       .then(data => {
-    //         if (data) {
-    //           this.setState({ auditoriums: data, isLoading: false });
-    //           }
-    //       })
-    //       .catch(response => {
-    //           NotificationManager.error(response.message || response.statusText);
-    //           this.setState({ isLoading: false });
-    //       });
-    //   }
 
     validate(id, value) {
         if (id === 'auditName') {
@@ -117,7 +89,6 @@ class EditAuditorium extends React.Component {
     editAuditorium() {
         var idFromUrl = (window.location.pathname).split("/");
         var id = idFromUrl[3];
-        console.log("audit");
         
         const { cinemaId, numberOfSeats, seatRows, auditName } = this.state;
 

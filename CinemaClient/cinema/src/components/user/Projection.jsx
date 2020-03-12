@@ -50,11 +50,6 @@ class Projection extends Component {
     this.getAllAuditoriums();
   }
 
-  //   handleChange(e) {
-  //     const { id, value } = e.target;
-  //     this.setState({ [id]: value });
-  // }
-
   handleSubmit(e) {
     e.preventDefault();
     this.setState({ submitted: true });
@@ -62,8 +57,6 @@ class Projection extends Component {
 
     if (cinemaId || auditoriumId || movieId || dateTime) {
       this.getCurrentFilteredMoviesAndProjections();
-      console.log("uspesno");
-
     } else {
       NotificationManager.error('Not found.');
       this.setState({ submitted: false });
@@ -83,8 +76,6 @@ class Projection extends Component {
   getCurrentMoviesAndProjections() {
 
     this.setState({ submitted: false });
-
-    console.log("ucitana defaultna lista");
 
     const requestOptions = {
       method: 'GET',
@@ -110,22 +101,14 @@ class Projection extends Component {
       .catch(response => {
         this.setState({ isLoading: false });
         NotificationManager.error(response.message || response.statusText);
-        // this.setState({ submitted: false });
       });
 
   }
 
   getCurrentFilteredMoviesAndProjections() {
 
-    console.log("doslo do : getCurrentFilteredMoviesAndProjections");
-
     const { cinemaId, auditoriumId, movieId, dateTime } = this.state;
-    // var cinemaId = (window.location.search).split('&')[0].slice(10);
-    // var auditoriumId = (window.location.search).split('&')[1].slice(13);
-    // var movieId = (window.location.search).split('&')[2].slice(8);
-    // var dateTime = (window.location.search).split('&')[3].slice(9);
-    console.log("cinemaId: " + cinemaId + ", auditoriumId: " + auditoriumId + ", movieId: " + movieId + ", dateTime: " + dateTime);
-
+   
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -136,23 +119,19 @@ class Projection extends Component {
 
     this.setState({ isLoading: true });
     let query = "";
-    if(cinemaId){
+    if (cinemaId) {
       query = `cinemaId=${cinemaId}`;
-      console.log("cinemaId", cinemaId, query);
     }
-    if(auditoriumId){
+    if (auditoriumId) {
       query += `${query.length ? "&" : ""}auditoriumId=${auditoriumId}`;
-      console.log("auditoriumId", auditoriumId, query);
     }
-    if(movieId){
+    if (movieId) {
       query += `${query.length ? "&" : ""}movieId=${movieId}`;
-      console.log("movieId", movieId, query);
     }
-    if(dateTime){
+    if (dateTime) {
       query += `${query.length ? "&" : ""}dateTime=${dateTime}`;
-      console.log("dateTime", dateTime, query);
     }
-    if(query.length){
+    if (query.length) {
       query = `?${query}`;
     }
     fetch(`${serviceConfig.baseURL}/api/projections/filter${query}`, requestOptions)
@@ -168,9 +147,17 @@ class Projection extends Component {
       })
       .then(data => {
         if (data) {
+          let movies = this.state.movies;
+          let filteredMovies = data;
+          for (let i = 0; i < movies.length; i++) {
+            for (let j = 0; j < filteredMovies.length; j++) {
+              if (movies[i].id === data[j].movieId) {
+                data[j].bannerUrl = movies[i].bannerUrl;
+              }
+            }
+          }
+
           this.setState({ filteredProjections: data, isLoading: false });
-          console.log("fetch prosao");
-         console.log("filtrirani podaci: ", data);
 
         }
       })
@@ -286,15 +273,14 @@ class Projection extends Component {
     var checkIfSelectedMovie = this.state.selectedMovie;
     var checkIfSelectedDate = this.state.selectedDate;
 
-    console.log(checkIfSelectedCinema, checkIfSelectedAuditorium, checkIfSelectedMovie, checkIfSelectedDate);
-
     return this.state.movies.map(movie => {
       var pr = movie.projections;
       var proj = pr.map((projection, index) => {
-        return <Button key={projection.id} onClick={() => this.navigateToProjectionDetails(projection.id, movie.id)} className="btn-projection-time">{projection.projectionTime.slice(11,16)}h</Button>;
+        return <Button key={projection.id} onClick={() => this.navigateToProjectionDetails(projection.id, movie.id)} className="btn-projection-time">{projection.projectionTime.slice(11, 16)}h</Button>;
       });
 
       return <Card.Body>
+        <div><img class="img-style" src={movie.bannerUrl}></img></div>
         <Card.Title><span className="card-title-font">{movie.title}</span> {this.getRoundedRating(movie.rating)}</Card.Title>
         <hr />
         <Card.Subtitle className="mb-2 text-muted">Year of production: {movie.year}</Card.Subtitle>
@@ -312,21 +298,19 @@ class Projection extends Component {
 
   fillTableWithFilteredProjections() {
 
-    console.log("table with filtered projections");
-    console.log("lista filter", this.state.filteredProjections);
-
     return this.state.filteredProjections.map(filteredProj => {
       return <Card.Body>
+        <div class="banner-img"><img class="img-style" src={filteredProj.bannerUrl}></img></div>
         <Card.Title><span className="card-title-font">{filteredProj.movieTitle} - {filteredProj.auditoriumName}</span> {this.getRoundedRating(filteredProj.movieRating)}</Card.Title>
         <hr />
-    <Card.Subtitle className="mb-2 text-muted">Year of production: {filteredProj.movieYear}</Card.Subtitle>
+        <Card.Subtitle className="mb-2 text-muted">Year of production: {filteredProj.movieYear}</Card.Subtitle>
         <hr />
         <Card.Text>
           <span className="mb-2 font-weight-bold">
             Projection times:
         </span>
         </Card.Text>
-        <Button key={filteredProj.id} onClick={() => this.navigateToProjectionDetails(filteredProj.id, filteredProj.movieId)} className="btn-projection-time">{filteredProj.projectionTime.slice(11,16)}h</Button>
+        <Button key={filteredProj.id} onClick={() => this.navigateToProjectionDetails(filteredProj.id, filteredProj.movieId)} className="btn-projection-time">{filteredProj.projectionTime.slice(11, 16)}h</Button>
       </Card.Body>
     })
   }
@@ -416,7 +400,7 @@ class Projection extends Component {
     const checkRowsData = this.checkIfFiltered();
     return (
       <Container>
-        <h1>Current projections</h1>
+        <h1 class="projections-title">Current projections</h1>
         <form id="name" name={name} onSubmit={this.handleSubmit} className="filter">
           <span class="filter-heading">Filter by:</span>
           <select onChange={(e) => this.getAuditoriumsBySelectedCinema(e.target.value)} name="cinemaId" id="cinema" class="select-dropdown">

@@ -48,7 +48,29 @@ class ShowAllCinemas extends Component {
     }
 
     removeCinema(id) {
-        // to be implemented
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+          };
+    
+          fetch(`${serviceConfig.baseURL}/api/cinemas/${id}`, requestOptions)
+            .then(response => {
+              if (!response.ok) {
+                return Promise.reject(response);
+            }
+            NotificationManager.success("Successfully deleted cinema.");
+            return response.json();
+            })
+            
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ isLoading: false });
+            });
+            setTimeout(()=>
+            window.location.reload(), 1000
+            );
+    
     }
 
     fillTableWithDaata() {

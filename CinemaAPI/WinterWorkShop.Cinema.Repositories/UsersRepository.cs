@@ -26,6 +26,7 @@ namespace WinterWorkShop.Cinema.Repositories
         {
             User existing = _cinemaContext.Users.Find(id);
             var result = _cinemaContext.Users.Remove(existing).Entity;
+            _cinemaContext.SaveChanges();
 
             return result;
         }

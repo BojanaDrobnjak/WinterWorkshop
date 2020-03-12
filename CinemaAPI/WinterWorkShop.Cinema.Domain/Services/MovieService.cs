@@ -42,7 +42,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Id = item.Id,
                     Rating = item.Rating ?? 0,
                     Title = item.Title,
-                    Year = item.Year
+                    Year = item.Year,
+                    BannerUrl = item.BannerUrl
                 };
                 result.Add(model);
             }
@@ -90,7 +91,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         Rating = movie.Rating ?? 0,
                         Title = movie.Title,
                         Year = movie.Year,
-                        Projections = listOfProjs
+                        Projections = listOfProjs,
+                        BannerUrl = movie.BannerUrl
                     };
                     result.Add(model);
             }
@@ -208,7 +210,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Title = newMovie.Title,
                 Current = newMovie.Current,
                 Year = newMovie.Year,
-                Rating = newMovie.Rating
+                Rating = newMovie.Rating,
+                BannerUrl = newMovie.BannerUrl
             };
 
             var data = _moviesRepository.Insert(movieToCreate);

@@ -180,16 +180,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
             seatModelsByAuditoriumId.ToList();
 
-            foreach (Seat seat in seatModelsByAuditoriumId)
-            {
-                var deletedReservations = await _reservationService.DeleteBySeatId(seat.Id);
-
-                if (deletedReservations == null)
-                {
-                    return null;
-                }
-            }
-
             var data = await _seatsRepository.DeleteByAuditoriumId(auditoriumId);
 
             if (data == null)
@@ -197,7 +187,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            _seatsRepository.Save();
 
             List<SeatDomainModel> domainModelList = new List<SeatDomainModel>();
 

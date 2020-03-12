@@ -61,7 +61,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Authorize(Roles = "admin, superUser")]
         [HttpPost]
         [Route("Add")]
-        public async Task<ActionResult>Post (string name)
+        public async Task<ActionResult>Post ([FromBody]string name)
         {
             if (name == null)
             {

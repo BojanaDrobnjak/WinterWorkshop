@@ -4,7 +4,6 @@ import { NotificationManager } from 'react-notifications';
 import * as authCheck from '../helpers/authCheck';
 
 export const PrivateRouteAdmin = ({ component: Component, ...rest }) => {
-    console.log(authCheck.isAdmin());
     useEffect(() => {
         if(!authCheck.isAdmin()){
             NotificationManager.error('You shall not pass!');

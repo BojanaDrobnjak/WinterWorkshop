@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
-import { getTokenExp, isGuest } from '../../src/components/helpers/authCheck';
+import { getTokenExp, isGuest, getUserName } from '../../src/components/helpers/authCheck';
 
 class Header extends Component {
   constructor(props) {
@@ -28,13 +29,18 @@ class Header extends Component {
     );
   }
 
-  componentDidMount() {
-    let tokenExp = getTokenExp() ;
-    let currentTimestamp = +new Date();
-    
-    if ((tokenExp * 1000)> currentTimestamp) {
-      console.log("token jos nije istekao ");
+
+  shouldDisplayUserProfile;
+  shouldShowUserProfile() {
+    if (this.shouldDisplayUserProfile === undefined) {
+      this.shouldDisplayUserProfile = !isGuest();
     }
+    return this.shouldDisplayUserProfile;
+  }
+
+  componentDidMount() {
+    let tokenExp = getTokenExp();
+    let currentTimestamp = +new Date();
     if (!tokenExp || ((tokenExp * 1000) < currentTimestamp)) {
       this.getTokenForGuest();
     }
@@ -64,12 +70,10 @@ class Header extends Component {
     e.preventDefault();
     localStorage.removeItem("userLoggedIn");
     this.setState({ submitted: true });
-    //obrisati ovo
     this.token = false;
     this.getTokenForGuest();
   }
 
-  //OVO BI TREBALO DA SE ZAVRSI MATIJA!!!
   hideLoginButtonElement() {
 
     let loginButton = document.getElementById('login');
@@ -122,18 +126,11 @@ class Header extends Component {
         if (data.userName) {
           this.setState({ shouldHide: false });
           if (!data.isAdmin && !data.isSuperUser && !data.isUser) {
-            console.log(data.isAdmin);
             isGuest = true;
           }
           this.getToken(data.isAdmin, data.isSuperUser, data.isUser, isGuest);
           NotificationManager.success('Welcome, ' + data.firstName + '!');
-          console.log(data.isUser + " :user");
-          console.log(data.isAdmin + " :admin");
-          console.log(data.isSuperUser + " :superUser");
-          console.log(isGuest + " :guest"); 
-         
         }
-
       })
       .catch(response => {
         NotificationManager.error('Username does not exists.');
@@ -159,7 +156,7 @@ class Header extends Component {
           localStorage.setItem("jwt", data.token);
           setTimeout(() => {
             window.location.reload();
-           }, 500);
+          }, 500);
         }
       })
       .catch(response => {
@@ -196,6 +193,10 @@ class Header extends Component {
 
   }
 
+  redirectToUserPage = () =>{
+    this.props.history.push(`userprofile`);
+  }
+
   refreshPage() {
     window.location.reload(true);
   }
@@ -218,6 +219,7 @@ class Header extends Component {
               className="mr-sm-2" />
             <Button type="submit" variant="outline-success" id="login">Login</Button>
           </Form>
+          {this.shouldShowUserProfile() && (<Button style={{backgroundColor:"transparent", marginRight: "10px"}} onClick={this.redirectToUserPage} >{getUserName()}</Button>)} 
           <Form inline onSubmit={(e) => this.handleSubmitLogout(e)}>
             <Button type="submit" variant="outline-danger" id="logout">Logout</Button>
           </Form>
@@ -228,4 +230,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);
