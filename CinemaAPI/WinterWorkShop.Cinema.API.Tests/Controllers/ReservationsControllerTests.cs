@@ -24,6 +24,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         private ReservationDomainModel _reservationDomainModel;
         private CreateReservationResultModel _reservationResultModel;
         private CreateReservationModel _createReservationModel;
+        private CreateReservationResultModel _failedReservationResultModel;
 
         [TestInitialize]
         public void TestInitialize()
@@ -40,6 +41,13 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 ErrorMessage = null,
                 IsSuccessful = true,
                 Reservation = _reservationDomainModel
+            };
+
+            _failedReservationResultModel = new CreateReservationResultModel
+            {
+                ErrorMessage = "Error",
+                IsSuccessful = false,
+                Reservation = null
             };
 
             _createReservationModel = new CreateReservationModel
@@ -504,10 +512,87 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(resultModel[0].ProjectionId, _createReservationModel.ProjectionId);
             Assert.AreEqual(expectedCount, _createReservationModel.SeatIds.Count);
             Assert.AreEqual(resultModel[0].UserId, _createReservationModel.UserId);
+        }
 
+        [TestMethod]
+        public void ReservationsController_Post_InvalidModelState()
+        {
+            //Arrange
+            string expectedMessage = "Invalid Model State";
+            int expectedStatusCode = 400;
+
+            ReservationsController reservationsController = new ReservationsController(_mockReservationService.Object, _mockUserService.Object, _mockProjectionService.Object);
+            reservationsController.ModelState.AddModelError("key", "Invalid Model State");
+
+            //Act
+            var result = reservationsController.PostAsync(_createReservationModel).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultMessage = (BadRequestObjectResult)result;
+            var resultMassageValue = ((BadRequestObjectResult)result).Value;
+            var errorResult = ((SerializableError)resultMassageValue).GetValueOrDefault("key");
+            var message = (string[])errorResult;
+
+
+            //Assert
+            Assert.IsNotNull(resultMessage);
+            Assert.AreEqual(expectedMessage, message[0]);
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultMessage.StatusCode);
+        }
+
+        [TestMethod]
+        public void ReservationsController_Post_ThrowsDbUpdateException()
+        {
+            //Arrange
+            string expectedMessage = "Inner exception error message.";
+            int expectedStatusCode = 400;
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+
+            ReservationsController reservationsController = new ReservationsController(_mockReservationService.Object, _mockUserService.Object, _mockProjectionService.Object);
+
+            _mockReservationService.Setup(x => x.AddReservation(It.IsAny<ReservationDomainModel>())).Throws(dbUpdateException);
+
+            //Act
+
+            var result = reservationsController.PostAsync(_createReservationModel).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultResponse = ((BadRequestObjectResult)result);
+            var badObjectResult = ((BadRequestObjectResult)result).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
 
         }
 
+        [TestMethod]
+        public void ReservationsController_Post_UnsuccessfulCreation()
+        {
+            //Arrange
+            int expectedStatusCode = 400;
+            int expectedCount = 1;
+            string expectedMessage = "Error";
 
+            Task<CreateReservationResultModel> createReservationResultModel = Task.FromResult(_failedReservationResultModel);
+
+            ReservationsController reservationsController = new ReservationsController(_mockReservationService.Object, _mockUserService.Object, _mockProjectionService.Object);
+
+            _mockReservationService.Setup(x => x.AddReservation(It.IsAny<ReservationDomainModel>())).Returns(createReservationResultModel);
+
+            //Act
+            var result = reservationsController.PostAsync(_createReservationModel).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultResponse = ((BadRequestObjectResult)result);
+            var badObjectResult = ((BadRequestObjectResult)result).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+
+        }
     }
 }
