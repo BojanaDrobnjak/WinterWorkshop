@@ -90,7 +90,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             reservationDomainModels = await _reservationService.GetByProjectionIdUserId(projectionId, userId);
             
-            if (reservationDomainModels.Count() == 0)
+            if (reservationDomainModels == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
@@ -114,7 +114,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             reservationDomainModels = await _reservationService.GetByUserId(userId);
 
-            if (reservationDomainModels.Count() == 0)
+            if (reservationDomainModels == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
@@ -138,7 +138,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             reservationDomainModels = await _reservationService.GetByUserId(userId);
 
-            if (reservationDomainModels.Count() == 0)
+            if (reservationDomainModels == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
@@ -175,7 +175,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
-            if (deletedReservations.Count() == 0)
+            if (deletedReservations == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
@@ -212,7 +212,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
-            if (deletedReservations.Count() == 0)
+            if (deletedReservations == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
