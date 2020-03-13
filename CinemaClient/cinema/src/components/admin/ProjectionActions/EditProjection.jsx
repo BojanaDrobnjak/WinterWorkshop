@@ -220,7 +220,7 @@ class EditProjection extends React.Component {
                                     />
                                 <FormText className="text-danger">{projectionTimeError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
+                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Projection</Button>
                         </form>
                     </Col>
                 </Row>

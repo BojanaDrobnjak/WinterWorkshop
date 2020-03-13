@@ -44,7 +44,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
                         <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
-                        <PrivateRouteAdmin path="/dashboard/EditAuditorium" component={EditAuditorium} />
+                        <PrivateRouteAdminAndSuperUser path="/dashboard/EditAuditorium" component={EditAuditorium} />
                         <PrivateRouteAdminAndSuperUser path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdminAndSuperUser path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdminAndSuperUser path="/dashboard/NewProjection" component={NewProjection} />
