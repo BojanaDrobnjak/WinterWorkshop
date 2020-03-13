@@ -114,6 +114,28 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Created("auditoriums//" + createAuditoriumResultModel.Auditorium.Id, createAuditoriumResultModel);
         }
 
+        [HttpGet]
+        [Route("getauditorium/{id}")]
+        public async Task<ActionResult<AuditoriumDomainModel>> GetById(int id)
+        {
+        
+            AuditoriumDomainModel auditorium;
+
+            auditorium = await _auditoriumService.GetByIdAsync(id);
+            if (auditorium == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Ok(auditorium);
+        }
+
         [HttpPut]
         [Route("editauditorium/{id}")]
         public async Task<ActionResult> Edit(int id,[FromBody]CreateAuditoriumModel auditoriumModel)

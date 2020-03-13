@@ -23,6 +23,36 @@ class EditAuditorium extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.updateInputsWithValues();
+    }
+
+    updateInputsWithValues() {
+        var idFromUrl = (window.location.pathname).split("/");
+        var id = idFromUrl[3];
+        console.log("id is: " + id);
+        const requestOptions = {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+      fetch(`${serviceConfig.baseURL}/api/auditoriums/getauditorium/${id}`, requestOptions)
+            .then(response => {
+                console.log("response is: ", response)
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.statusText;
+            })
+            .then(result => {
+                //"id":40,"cinemaId":7,"name":"3D",
+              console.log("result is: ", result.id);
+              console.log("result is: ", result.cinemaId);
+              console.log("result is: ", result.name);
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     componentDidMount() {
@@ -176,8 +206,9 @@ class EditAuditorium extends React.Component {
     }
       
     render() {
-        const { cinemas, numberOfSeats, submitted, seatRows, auditName, auditNameError, numOfSeatsError,
+        let { cinemas, numberOfSeats, submitted, seatRows, auditName, auditNameError, numOfSeatsError,
                 seatRowsError, cinemaIdError, canSubmit } = this.state;
+          console.log("dal se ovo poziva vise puta?");
         const auditorium = this.renderRows(seatRows, numberOfSeats);
         return (
             <Container>

@@ -327,6 +327,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
             movieToUpdate.Year = movieToUpdate.Year;
             movieToUpdate.Rating = movieToUpdate.Rating;
+            movieToUpdate.BannerUrl = movieToUpdate.BannerUrl;
 
             MovieDomainModel movieDomainModel;
             try

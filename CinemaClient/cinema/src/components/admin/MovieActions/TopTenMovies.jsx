@@ -3,9 +3,11 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { Row, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faAnchor } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faAnchor, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import './../../../index.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class TopTenMovies extends Component {
@@ -18,6 +20,7 @@ class TopTenMovies extends Component {
       year: 0,
       id: '',
       rating: 0,
+      tags: [],
       current: false,
       titleError: '',
       yearError: '',
@@ -94,11 +97,60 @@ class TopTenMovies extends Component {
       });
   }
 
+  getTagsByMovieId(e, movieId) {
+
+    e.preventDefault();
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        }
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/tags/getbymovieid/${movieId}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) {
+                this.setState({ tags: data });
+                this.showTags();
+            }
+        })
+        .catch(response => {
+            NotificationManager.error(response.message || response.statusText);
+            this.setState({ submitted: false });
+        });
+}
+
+showTags() {
+    const { listOfTags } = this.state;
+    this.setState({ listOfTags: [] });
+    this.state.tags.map(tag => {
+        this.state.listOfTags.push(tag.name);
+    });
+    var list = ' | ';
+    for (var i = 0; i < (this.state.listOfTags.length); i++) {
+        list += this.state.listOfTags[i] + ' | ';
+    }
+    toast.info(list, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        className: "toast-class"
+    });
+
+}
+
   fillTableWithDaata() {
     
     if (this.state.filteredMoviesByYear.length > 0) {
       return this.state.filteredMoviesByYear.map(filteredMovie => {
         return <tr key={filteredMovie.id}>
+          <td className="text-center cursor-pointer" onClick={(e) => this.getTagsByMovieId(e, filteredMovie.id)} ><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faInfoCircle} /></td>
           <td>{filteredMovie.title}</td>
           <td>{filteredMovie.year}</td>
           <td>{Math.round(filteredMovie.rating)}/10</td>
@@ -112,6 +164,7 @@ class TopTenMovies extends Component {
       }
       return this.state.movies.map(movie => {
         return <tr key={movie.id}>
+          <td className="text-center cursor-pointer" onClick={(e) => this.getTagsByMovieId(e, movie.id)} ><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faInfoCircle} /></td>
           <td>{movie.title}</td>
           <td>{movie.year}</td>
           <td>{Math.round(movie.rating)}/10</td>
@@ -166,6 +219,7 @@ class TopTenMovies extends Component {
     const table = (<Table striped bordered hover size="sm" variant="dark">
       <thead>
         <tr>
+          <th>Tags</th>
           <th>Title</th>
           <th>Year</th>
           <th>Rating</th>

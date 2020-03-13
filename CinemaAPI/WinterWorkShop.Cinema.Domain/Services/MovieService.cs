@@ -242,7 +242,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Title = updateMovie.Title,
                 Current = updateMovie.Current,
                 Year = updateMovie.Year,
-                Rating = updateMovie.Rating
+                Rating = updateMovie.Rating,
+                BannerUrl = updateMovie.BannerUrl
             };
             
             var data = _moviesRepository.Update(movie);
@@ -259,7 +260,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Title = data.Title,
                 Current = data.Current,
                 Year = data.Year,
-                Rating = data.Rating ?? 0
+                Rating = data.Rating ?? 0,
+                BannerUrl = data.BannerUrl
             };
 
             return domainModel;
